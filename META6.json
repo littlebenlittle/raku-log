@@ -1,0 +1,18 @@
+{
+  "meta-version": "0",
+  "name": "Log",
+  "version": "0.0.0",
+  "auth": "github:littlebenlittle",
+  "description": "Simple logging",
+  "source-url": "https://github.com/littlebenlittle/raku-log",
+  "perl": "6.d",
+  "author": "Ben Little <ben.little@fruition.net>",
+  "tags": [
+    "log",
+    "logging"
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Log": "lib/Log.rakumod"
+  }
+}
