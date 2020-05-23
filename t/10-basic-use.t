@@ -25,7 +25,7 @@ for « DEBUG INFO WARN ERROR CRITICAL» -> $level {
         is $last-source     , 'my-logger'  , 'got expected source';
         is $last-message    , 'a message'  , 'got expected message';
         is $last-level      , $level       , 'got expected level';
-        is-approx $last-ts  , now  , 0.01  , 'timestamp is recent';
+        is-approx $last-ts  , now  , 0.1  , 'timestamp is recent';
     }
 }
 
