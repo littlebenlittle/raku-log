@@ -15,23 +15,24 @@ class Logger {
         $!name   = $name;
         $!supplier = Supplier.new;
     }
-    method subscribe(&callback  -->Nil) {
-        $!supplier.Supply.act: &callback;
-    }
-    multi method add-subscriber(&callback  -->Nil) {
-        $!supplier.Supply.act: &callback;
-    }
-    multi method add-subscriber(Logger:D $logger  -->Nil) {
-        my $supply = $!supplier.Supply.act: {
-            $logger.emit: $_
-        };
-    }
-    
-    multi method emit(message:D $msg -->Nil) {
-        $!supplier.emit: $msg;
-    }
+    #|( When subscriber is a callable, subscriber will be
+        executed each time a log message is passed to this
+        logger. The log message will be passed to subscriber.
+        as the topic.
 
-    multi method emit(Cool:D $message, Str:D $level  -->Nil) {
+        When subscriber is a Log::Logger, subscriber will be
+        added a sub-logger to this logger. Any new log messages
+        will be passed to all sub-loggers for this logger. )
+    proto method add-subscriber($subscriber     -->Nil) {*}
+    multi method add-subscriber(&subscriber     -->Nil) { $!supplier.Supply.act: &subscriber }
+    multi method add-subscriber(Logger $logger  -->Nil) { $!supplier.Supply.act: { $logger.emit: $_ } }
+
+    #| synonym for add-subscriber(Code)
+    method subscribe($subscriber  -->Nil) { self.add-subscriber: $subscriber }
+    
+    proto method emit(*@args  -->Nil) {*}
+    multi method emit(message $msg  -->Nil) { $!supplier.emit: $msg }
+    multi method emit(Cool $message, Str $level  -->Nil) {
         self.emit: message.new(
             source    => $.name,
             message   => $message,
