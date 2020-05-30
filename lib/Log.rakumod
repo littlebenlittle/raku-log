@@ -8,7 +8,7 @@ my class message is Cool {
     has Instant:D $.timestamp is required;
 }
 
-my class logger {
+class Logger {
     has Str:D       $.name     is required;
     has Supplier:D  $!supplier is required;
     submethod BUILD (Str:D :$name) {
@@ -21,7 +21,7 @@ my class logger {
     multi method add-subscriber(&callback  -->Nil) {
         $!supplier.Supply.act: &callback;
     }
-    multi method add-subscriber(logger:D $logger  -->Nil) {
+    multi method add-subscriber(Logger:D $logger  -->Nil) {
         my $supply = $!supplier.Supply.act: {
             $logger.emit: $_
         };
@@ -50,7 +50,7 @@ my class logger {
     method CRITICAL  (Cool:D $message -->Nil) { self.emit: $message, 'CRITICAL'; }
 }
 
-our sub new(Str:D $logger-name -->logger) {
-    return logger.new(name => $logger-name);
+our sub new(Str:D $logger-name -->Logger) {
+    return Logger.new(name => $logger-name);
 }
 
