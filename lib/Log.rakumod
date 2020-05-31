@@ -2,10 +2,12 @@
 unit package Log:auth<littlebenlittle>:ver<0.0.0>;
 
 my class message is Cool {
-    has Str:D     $.source    is required;
-    has Cool:D    $.message   is required;
-    has Str:D     $.level     is required;
-    has Instant:D $.timestamp is required;
+    has Cool      $.source    is required;
+    has Cool      $.message   is required;
+    has Cool      $.level     is required;
+    has Instant   $.timestamp is required;
+    has Cool      $.file      is required;
+    has Cool      $.line      is required;
 }
 
 class Logger {
@@ -33,22 +35,25 @@ class Logger {
     proto method emit(*@args  -->Nil) {*}
     multi method emit(message $msg  -->Nil) { $!supplier.emit: $msg }
     multi method emit(Cool $message, Str $level  -->Nil) {
+        my $frame = callframe 2;
         self.emit: message.new(
             source    => $.name,
             message   => $message,
             level     => $level,
             timestamp => now,
+            file      => $frame.file,
+            line      => $frame.line,
         );
     }
 
     # TODO: littlebenlittle  2020-05-29T17:51:15Z
     #   maybe create these methods dynamically at compile time
     #   to support custom log and verbosity levels
-    method DEBUG     (Cool:D $message -->Nil) { self.emit: $message, 'DEBUG'   ; }
-    method INFO      (Cool:D $message -->Nil) { self.emit: $message, 'INFO'    ; }
-    method WARN      (Cool:D $message -->Nil) { self.emit: $message, 'WARN'    ; }
-    method ERROR     (Cool:D $message -->Nil) { self.emit: $message, 'ERROR'   ; }
-    method CRITICAL  (Cool:D $message -->Nil) { self.emit: $message, 'CRITICAL'; }
+    method DEB    (Cool:D $message -->Nil) { self.emit: $message, 'DEB'  }
+    method INFO   (Cool:D $message -->Nil) { self.emit: $message, 'INFO' }
+    method WARN   (Cool:D $message -->Nil) { self.emit: $message, 'WARN' }
+    method ERR    (Cool:D $message -->Nil) { self.emit: $message, 'ERR'  }
+    method CRIT   (Cool:D $message -->Nil) { self.emit: $message, 'CRIT' }
 }
 
 our sub new(Str:D $logger-name -->Logger) {

@@ -17,7 +17,7 @@ $logger.subscribe: {
     $last-ts       = .timestamp;
 };
 
-for « DEBUG INFO WARN ERROR CRITICAL» -> $level {
+for « DEB INFO WARN ERR CRIT » -> $level {
     subtest "emit $level message" => {
         plan 4;
         # Call each method that exactly matches $level
