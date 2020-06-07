@@ -10,7 +10,7 @@ my class message is Cool {
     has Cool      $.line      is required;
 }
 
-class Logger {
+class Log {
     has Str:D       $.name     is required;
     has Supplier:D  $!supplier is required;
     submethod BUILD (Str:D :$name) {
@@ -22,12 +22,12 @@ class Logger {
         logger. The log message will be passed to subscriber.
         as the topic.
 
-        When subscriber is a Log::Logger, subscriber will be
+        When subscriber is a Log::Log, subscriber will be
         added a sub-logger to this logger. Any new log messages
         will be passed to all sub-loggers for this logger. )
     proto method add-subscriber($subscriber     -->Nil) {*}
     multi method add-subscriber(&subscriber     -->Nil) { $!supplier.Supply.act: &subscriber }
-    multi method add-subscriber(Logger $logger  -->Nil) { $!supplier.Supply.act: { $logger.emit: $_ } }
+    multi method add-subscriber(Log $logger  -->Nil) { $!supplier.Supply.act: { $logger.emit: $_ } }
 
     #| synonym for add-subscriber(Code)
     method subscribe($subscriber  -->Nil) { self.add-subscriber: $subscriber }
@@ -56,7 +56,14 @@ class Logger {
     method CRIT   (Cool:D $message -->Nil) { self.emit: $message, 'CRIT' }
 }
 
-our sub new(Str:D $logger-name -->Logger) {
-    return Logger.new(name => $logger-name);
+#|( contsructs a log with the given name.  the
+    name of a log is NOT a unique identifier,
+    so two log instances can both be named "foo" )
+our sub new(Str:D $logger-name -->Log) {
+    return Log.new(name => $logger-name);
+}
+
+role Logging[$name = fail "please provide a log name"] {
+    has Log $.log = Log.new(name => $name);
 }
 
